@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
-<meta name="robots" content="noindex"><meta name="nx-build" content="11161300">
+<meta name="robots" content="noindex"><meta name="nx-build" content="11161324">
 <meta name="theme-color" content="#0b7fb5">
 <link rel="manifest" href="/manifest.webmanifest">
 <link rel="apple-touch-icon" href="/icon-180.png"><link rel="icon" href="/icon-192.png">
@@ -305,15 +305,18 @@ const chips=$('chips');Object.entries(CAT).forEach(([k,v])=>{const b=document.cr
 
 // ---------- lista numerada por categoría
 const CHEV='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"><path d="m9 6 6 6-6 6"/></svg>';
-function renderList(first){const L=$('clist');const ks=Object.keys(CAT).filter(k=>active.has(k));if(!ks.length){L.classList.remove('on');document.body.classList.remove('lst');return}
+function renderList(first){const L=$('clist');const ks=Object.keys(CAT).filter(k=>active.has(k));if(!ks.length){hideList();return}
  if(first){ks.splice(ks.indexOf(first),1);ks.unshift(first)}
- let h=`<div class="clh"><b>${ks.length===1?CAT[ks[0]].n:'Tu selección'}</b><button id="clc">Ocultar lista</button></div>`;
+ let h=`<div class="clh"><b>${ks.length===1?CAT[ks[0]].n:'Tu selección'}</b><button id="clc">Cerrar ✕</button></div>`;
  ks.forEach(k=>{const items=PL.filter(p=>p.c===k).slice().sort((a,b)=>(parseInt(a.k)||99)-(parseInt(b.k)||99)||(a.k||'').localeCompare(b.k||'')||a.n.localeCompare(b.n));
   if(ks.length>1)h+=`<div class="clg"><i style="background:${CAT[k].c}"></i>${CAT[k].n}<small>· ${items.length}</small></div>`;
   items.forEach(p=>{const r=route(origin,p.p[0],true);h+=`<button class="cli" data-id="${p.id}"><span class="dot" style="background:${CAT[k].c}">${badge(p)}</span>${p.n}<em>${r?(r.m<40?'muy cerca':'≈ '+Math.max(1,Math.round(r.m/65))+' min'):''}</em>${CHEV}</button>`})});
- L.innerHTML=h;L.classList.add('on');document.body.classList.add('lst');L.scrollTop=0;
- $('clc').onclick=()=>{L.classList.remove('on');document.body.classList.remove('lst')};
- L.querySelectorAll('.cli').forEach(b=>b.onclick=()=>{const p=PL[+b.dataset.id];L.classList.remove('on');document.body.classList.remove('lst');open(p,0)})}
+ const was=L.classList.contains('on');L.innerHTML=h;L.classList.add('on');document.body.classList.add('lst');L.scrollTop=0;if(!was){try{history.pushState({cl:1},'')}catch(_){}}
+ $('clc').onclick=()=>hideList();
+ L.querySelectorAll('.cli').forEach(b=>b.onclick=()=>{const p=PL[+b.dataset.id];hideList();open(p,0)})}
+function hideList(fromPop){const L=$('clist');if(!L.classList.contains('on'))return;L.classList.remove('on');document.body.classList.remove('lst');if(!fromPop&&history.state&&history.state.cl)history.back()}
+document.addEventListener('pointerdown',e=>{if(!$('clist').classList.contains('on'))return;if(e.target.closest('.clist,.chips'))return;hideList()},true);
+addEventListener('popstate',()=>hideList(true));
 function fitCat(k){let x0=1e9,y0=1e9,x1=-1e9,y1=-1e9;PL.filter(p=>p.c===k).forEach(p=>p.p.forEach(q=>{if(q[0]<120*K)return;x0=Math.min(x0,q[0]);y0=Math.min(y0,q[1]);x1=Math.max(x1,q[0]);y1=Math.max(y1,q[1])}));const s=Math.min(maxS,Math.max(minS,Math.min(vw/(x1-x0+300),(vh-300)/(y1-y0+300))));go(s,vw/2-(x0+x1)/2*s,(vh+190)/2-(y0+y1)/2*s,520)}
 // ---------- ficha
 let cur=null,curI=0;
