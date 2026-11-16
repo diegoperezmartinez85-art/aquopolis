@@ -6,7 +6,7 @@
 <meta name="robots" content="noindex">
 <meta name="theme-color" content="#0b7fb5">
 <link rel="manifest" href="/manifest.webmanifest">
-<link rel="apple-touch-icon" href="/nexos-icon-192.png">
+<link rel="apple-touch-icon" href="/icon-180.png"><link rel="icon" href="/icon-192.png">
 <meta name="apple-mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="Aquópolis">
 <title>Aquópolis · Mapa interactivo</title>
 <meta name="description" content="Mapa interactivo de Aquópolis, Mar del Plata: encontrá cada tobogán, pileta, comida y servicio, y llegá caminando dentro del parque.">
@@ -187,6 +187,20 @@ button{font:inherit;color:inherit;border:0;background:none;cursor:pointer}
 .phm .b2{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:12px}.phm .b2 button,.phm .b2 a{height:48px;border-radius:14px;display:grid;place-items:center;font:800 15px Nunito;text-decoration:none}
 .phm .s1{background:linear-gradient(135deg,#21c3f0,#0b7fb5);color:#fff}.phm .s2{background:#f1f5f7;color:var(--ink)}
 .av b.pub{background:#a78bfa;color:#1e1047}
+
+.clist{display:none;margin-top:8px;background:#fff;border-radius:18px;box-shadow:0 14px 34px rgba(14,50,71,.2);max-height:min(46vh,420px);overflow-y:auto;overscroll-behavior:contain}
+.clist.on{display:block;animation:clin .25s cubic-bezier(.2,.9,.25,1)}
+@keyframes clin{from{opacity:0;transform:translateY(-8px)}}
+.clh{position:sticky;top:0;z-index:1;display:flex;align-items:center;gap:8px;padding:11px 12px 9px 14px;background:#fff;border-bottom:1px solid var(--line);font:800 12px Nunito;letter-spacing:1.2px;text-transform:uppercase;color:var(--mut)}
+.clh b{flex:1}.clh button{height:30px;padding:0 10px;border-radius:9px;background:#f1f5f7;font:800 12px Nunito;letter-spacing:0;text-transform:none;color:var(--ink)}
+.clg{padding:8px 14px 4px;font:800 12.5px Nunito;display:flex;align-items:center;gap:7px}.clg i{width:9px;height:9px;border-radius:50%}.clg small{color:var(--mut);font-weight:700}
+.cli{display:flex;width:100%;align-items:center;gap:11px;padding:9px 14px;text-align:left;font:700 15px Nunito;color:var(--ink)}
+.cli:active{background:#f1f7fa}.cli .dot{width:28px;height:28px;font-size:12.5px;box-shadow:0 2px 6px rgba(0,0,0,.15)}
+.cli em{margin-left:auto;font-style:normal;font:700 12px Nunito;color:var(--mut);white-space:nowrap}
+.cli svg{width:16px;height:16px;color:#9fb3bf;flex:none}
+body.lst .av{display:none}
+.nxi .nxi-ok,.nxi .nxi-ic{background:linear-gradient(135deg,#21c3f0,#0b7fb5)!important}
+.nxi{background:#0e3247!important}
 </style>
 </head>
 <body>
@@ -222,6 +236,7 @@ button{font:inherit;color:inherit;border:0;background:none;cursor:pointer}
  <button class="wx" id="wxb" aria-label="Pronóstico extendido"><div class="c" id="clk">--:--</div><div class="w" id="wx">Mar del Plata</div><div class="more">Pronóstico <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"><path d="m9 6 6 6-6 6"/></svg></div></button></div>
  <div class="srch"><label class="box"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg><input id="q" placeholder="Buscá un tobogán, comida o servicio…" autocomplete="off"></label><div class="sug" id="sug"></div></div>
  <div class="chips" id="chips"></div>
+ <div class="clist" id="clist"></div>
 </div>
 <div class="av" id="av"><b id="avl">Ahora</b><div class="tk"><span id="avt"></span></div><em>EJEMPLO</em></div>
 
@@ -261,7 +276,7 @@ function go(s,x,y,ms=420){cancelAnimationFrame(anim);const s0=sc,x0=tx,y0=ty,t0=
  (function f(t){const k=Math.min(1,(t-t0)/ms),e=1-Math.pow(1-k,3);sc=s0+(s-s0)*e;tx=x0+(x-x0)*e;ty=y0+(y-y0)*e;clamp();apply();if(k<1)anim=requestAnimationFrame(f)})(t0)}
 function zoomAt(f,cx,cy,ms=220){const s=Math.min(maxS,Math.max(minS,sc*f)),k=s/sc;go(s,cx-(cx-tx)*k,cy-(cy-ty)*k,ms)}
 function reset(ms){vw=innerWidth;vh=innerHeight;minS=Math.min(vw/W,(vh-200)/H)*0.6;maxS=Math.max(2.2,minS*7);const s=fitS();go(s,(vw-W*s)/2,190+((vh-190)-H*s)/2,ms??420)}
-function flyTo(x,y,s){s=s||Math.max(sc,Math.min(maxS,fitS()*2.2));const hs=document.body.classList.contains('sh')?(vh-250)/2+30:vh/2+60;go(s,vw/2-x*s,hs-y*s)}
+function flyTo(x,y,s){s=s||Math.max(sc,Math.min(maxS,fitS()*2.2));const shh=document.body.classList.contains('sh')?$('sheet').offsetHeight:0;const top=250,hs=top+Math.max(60,(vh-shh-top))/2+20;go(s,vw/2-x*s,hs-y*s)}
 const P=new Map();let moved=0,pinch=null,tapT=0;
 const loc=e=>({x:e.clientX,y:e.clientY});
 function sp(){const[a,b]=[...P.values()];pinch={d:Math.max(1,Math.hypot(a.x-b.x,a.y-b.y)),s:sc,wx:((a.x+b.x)/2-tx)/sc,wy:((a.y+b.y)/2-ty)/sc}}
@@ -282,7 +297,19 @@ PL.forEach((p,i)=>{p.id=i;p.p=p.p.map(([x,y])=>[x*K,y*K])});
 function hit(x,y){let best=null,bd=1e9;const r=Math.max(26,22/sc);PL.forEach(pl=>{if(pl.c==='srv'&&!active.has('srv')&&!active.size&&false)return;pl.p.forEach((q,i)=>{const d=Math.hypot(q[0]-x,q[1]-y);if(d<r&&d<bd){bd=d;best={pl,i}}})});return best}
 const hl=$('hl');let active=new Set();
 function paintHL(){hl.innerHTML='';PL.forEach(pl=>{if(!active.has(pl.c))return;pl.p.forEach(q=>{const g=document.createElementNS(NS,'g');g.setAttribute('class',pl.c+' cs');g.dataset.x=q[0];g.dataset.y=q[1];g.innerHTML=`<circle class="ring" r="10" style="animation-delay:${(Math.random()*1.5).toFixed(2)}s"/><circle r="11" fill="none" stroke="#fff" stroke-width="3.5"/><circle r="11" fill="none" stroke="${CAT[pl.c].c}" stroke-width="2.2"/>`;hl.appendChild(g)})});apply()}
-const chips=$('chips');Object.entries(CAT).forEach(([k,v])=>{const b=document.createElement('button');b.className='chip';b.dataset.k=k;b.innerHTML=`<i style="background:${v.c}"></i>${v.n}`;b.onclick=()=>{active.has(k)?active.delete(k):active.add(k);b.classList.toggle('on',active.has(k));b.style.background=active.has(k)?v.c:'';paintHL();if(active.has(k))fitCat(k)};chips.appendChild(b)});
+const chips=$('chips');Object.entries(CAT).forEach(([k,v])=>{const b=document.createElement('button');b.className='chip';b.dataset.k=k;b.innerHTML=`<i style="background:${v.c}"></i>${v.n}`;b.onclick=()=>{active.has(k)?active.delete(k):active.add(k);b.classList.toggle('on',active.has(k));b.style.background=active.has(k)?v.c:'';paintHL();renderList(active.has(k)?k:null);if(active.has(k))fitCat(k)};chips.appendChild(b)});
+
+// ---------- lista numerada por categoría
+const CHEV='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"><path d="m9 6 6 6-6 6"/></svg>';
+function renderList(first){const L=$('clist');const ks=Object.keys(CAT).filter(k=>active.has(k));if(!ks.length){L.classList.remove('on');document.body.classList.remove('lst');return}
+ if(first){ks.splice(ks.indexOf(first),1);ks.unshift(first)}
+ let h=`<div class="clh"><b>${ks.length===1?CAT[ks[0]].n:'Tu selección'}</b><button id="clc">Ocultar lista</button></div>`;
+ ks.forEach(k=>{const items=PL.filter(p=>p.c===k).slice().sort((a,b)=>(parseInt(a.k)||99)-(parseInt(b.k)||99)||(a.k||'').localeCompare(b.k||'')||a.n.localeCompare(b.n));
+  if(ks.length>1)h+=`<div class="clg"><i style="background:${CAT[k].c}"></i>${CAT[k].n}<small>· ${items.length}</small></div>`;
+  items.forEach(p=>{const r=route(origin,p.p[0],true);h+=`<button class="cli" data-id="${p.id}"><span class="dot" style="background:${CAT[k].c}">${badge(p)}</span>${p.n}<em>${r?(r.m<40?'muy cerca':'≈ '+Math.max(1,Math.round(r.m/65))+' min'):''}</em>${CHEV}</button>`})});
+ L.innerHTML=h;L.classList.add('on');document.body.classList.add('lst');L.scrollTop=0;
+ $('clc').onclick=()=>{L.classList.remove('on');document.body.classList.remove('lst')};
+ L.querySelectorAll('.cli').forEach(b=>b.onclick=()=>{const p=PL[+b.dataset.id];L.classList.remove('on');document.body.classList.remove('lst');open(p,0)})}
 function fitCat(k){let x0=1e9,y0=1e9,x1=-1e9,y1=-1e9;PL.filter(p=>p.c===k).forEach(p=>p.p.forEach(q=>{if(q[0]<120*K)return;x0=Math.min(x0,q[0]);y0=Math.min(y0,q[1]);x1=Math.max(x1,q[0]);y1=Math.max(y1,q[1])}));const s=Math.min(maxS,Math.max(minS,Math.min(vw/(x1-x0+300),(vh-300)/(y1-y0+300))));go(s,vw/2-(x0+x1)/2*s,(vh+190)/2-(y0+y1)/2*s,520)}
 // ---------- ficha
 let cur=null,curI=0;
@@ -421,7 +448,7 @@ document.addEventListener('click',e=>{if(e.target.closest&&e.target.closest('.fb
  PL.filter(p=>p.c==='foto').forEach(p=>p.p.forEach(q=>{const m=document.createElementNS(NS,'g');m.setAttribute('class','cs fsp');m.dataset.x=q[0];m.dataset.y=q[1];
   m.innerHTML='<circle class="p2" r="12"/><circle class="p1" r="12"/><g transform="translate(-7.2 -7.2) scale(.6)" fill="none" stroke="#fff" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M4 8h3l1.6-2.2h6.8L17 8h3v11H4z"/><circle cx="12" cy="13" r="3.6"/></g>';g.appendChild(m)}));apply()})();
 // ================== PUBLICIDAD (espacios de ejemplo) ==================
-const ADS={ext:['Fotos de tu bajada en Poseidón','Retirá tu foto en el Centro fotográfico Click','cam'],mod:['Combo hamburguesa + bebida','Aquaburguer · 15% con el mapa','food'],fam:['Flotadores y antiparras','Fanshop · 2x1 en accesorios para chicos','bag'],com:['Helado de cono a mitad de precio','Heladería · de 15 a 17 h','ice'],rel:['Reservá tu quincho para el finde','Atención al Visitante · cupos limitados','cal'],srv:['Protector solar FPS 50','20% off en el Aquamarket','sun'],foto:['Imprimí tu foto con marco','Centro fotográfico Click · en el momento','cam']};
+const ADS={ext:['La foto de tu bajada, lista al salir','Retirala en el Centro fotográfico Click','cam'],mod:['Combo hamburguesa + bebida','Aquaburguer · 15% con el mapa','food'],fam:['Flotadores y antiparras','Fanshop · 2x1 en accesorios para chicos','bag'],com:['Helado de cono a mitad de precio','Heladería · de 15 a 17 h','ice'],rel:['Reservá tu quincho para el finde','Atención al Visitante · cupos limitados','cal'],srv:['Protector solar FPS 50','20% off en el Aquamarket','sun'],foto:['Imprimí tu foto con marco','Centro fotográfico Click · en el momento','cam']};
 const ADI={cam:'<path d="M4 8h3l1.6-2.2h6.8L17 8h3v11H4z"/><circle cx="12" cy="13" r="3.6"/>',food:'<path d="M4 11h16M5 11a7 7 0 0 1 14 0M4 15h16l-1 3H5z"/>',bag:'<path d="M5 8h14l-1 12H6zM9 8V6a3 3 0 0 1 6 0v2"/>',ice:'<path d="M8 10a4 4 0 0 1 8 0zM8 10l4 11 4-11"/>',cal:'<rect x="4" y="5" width="16" height="15" rx="2"/><path d="M8 3v4M16 3v4M4 10h16"/>',sun:'<circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M2 12h2M20 12h2M5 5l1.4 1.4M17.6 17.6 19 19M5 19l1.4-1.4M17.6 6.4 19 5"/>'};
 const _open=open;open=function(pl,i,fly){_open(pl,i,fly);const a=ADS[pl.c]||ADS.srv;$('adc').innerHTML=`<i><svg viewBox="0 0 24 24" fill="none" stroke="#b7791f" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">${ADI[a[2]]}</svg></i><div><small>Espacio publicitario · ejemplo</small><b>${a[0]}</b><span>${a[1]}</span></div>`;$('gph').style.display=pl.c==='foto'?'':'none'};
 $('adc').onclick=e=>{e.preventDefault();toast('Acá puede ir la promo de un comercio del parque o de una marca')};
@@ -448,6 +475,66 @@ $('phs').onclick=async()=>{if(!PHB)return;const f=new File([PHB],'aquopolis.jpg'
 
 reset(0);setTimeout(()=>toast('Tocá cualquier juego del mapa'),900);
 if('serviceWorker' in navigator&&location.hostname!=='localhost'&&location.protocol==='https:'){addEventListener('load',()=>navigator.serviceWorker.register('/sw.js').catch(()=>{}))}
+</script>
+<script>window.NXI={title:'Instalá el mapa de Aquópolis',sub:'Abrilo como una app, sin descargar nada',icon:'/icon-192.png',pos:'bottom',offset:12,key:'nx_inst_aquopolis',delay:15000,delayIos:22000,busy:function(){return !!document.querySelector('.modal.on,.sheet.on,.nav.on,.arr.on,.clist.on')}};</script><script>// NEXOS · Aviso para instalar la app (Android: botón Instalar · iPhone: cómo "Agregar a inicio")
+// Configuración opcional antes de cargar: window.NXI = { title, sub, icon, pos:'top'|'bottom', offset, key, skip:fn }
+(function () {
+  var C = window.NXI || {};
+  var KEY = C.key || 'nx_inst_seen';
+  var DAYS = 7;
+  function standalone() { try { return matchMedia('(display-mode: standalone)').matches || navigator.standalone === true; } catch (e) { return false; } }
+  if (standalone()) return;
+  try { if (C.skip && C.skip()) return; } catch (e) {}
+  function seen() { try { return +localStorage.getItem(KEY) || 0; } catch (e) { return 0; } }
+  function mark() { try { localStorage.setItem(KEY, String(Date.now())); } catch (e) {} }
+  if (Date.now() - seen() < DAYS * 864e5) return;
+
+  var pos = C.pos === 'top' ? 'top' : 'bottom';
+  var off = C.offset == null ? 12 : C.offset;
+  var R = 'margin:0;padding:0;border:0;width:auto;height:auto;min-width:0;max-width:none;position:static;float:none;letter-spacing:normal;text-transform:none;text-align:left;box-shadow:none;background:none;';
+  var css = '.nxi{all:initial;box-sizing:border-box;position:fixed;left:12px;right:12px;' + pos + ':calc(env(safe-area-inset-' + pos + ',0px) + ' + off + 'px);z-index:2147483000;display:none;align-items:center;gap:12px;padding:12px 10px 12px 14px;border-radius:18px;background:#15161d;color:#fff;border:1px solid rgba(255,255,255,.12);box-shadow:0 14px 36px rgba(0,0,0,.45);font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",system-ui,sans-serif;max-width:520px;margin:0 auto}' +
+    '.nxi.on{display:flex;animation:nxiIn .35s cubic-bezier(.2,.8,.2,1)}' +
+    '@keyframes nxiIn{from{opacity:0;transform:translateY(' + (pos === 'top' ? '-' : '') + '14px)}to{opacity:1;transform:none}}' +
+    '.nxi *{box-sizing:border-box;font-family:inherit}' +
+    '.nxi .nxi-ic{' + R + 'flex:none;width:44px;height:44px;border-radius:12px;overflow:hidden;background:linear-gradient(135deg,#6366f1,#06b6d4);display:block}' +
+    '.nxi .nxi-ic img{' + R + 'display:block;width:44px;height:44px;object-fit:cover}' +
+    '.nxi .nxi-tx{' + R + 'display:block;flex:1 1 auto;min-width:0}' +
+    '.nxi .nxi-ti{' + R + 'display:block;color:#fff;font-size:14.5px;font-weight:800;line-height:1.25}' +
+    '.nxi .nxi-su{' + R + 'display:block;color:rgba(255,255,255,.8);font-size:12.5px;font-weight:600;line-height:1.35;margin-top:2px}' +
+    '.nxi .nxi-su strong{color:#fff;font-weight:800}' +
+    '.nxi .nxi-su svg{display:inline-block;width:15px;height:15px;vertical-align:-3px;margin:0 2px}' +
+    '.nxi .nxi-ok{' + R + 'flex:none;display:inline-flex;align-items:center;justify-content:center;border-radius:11px;height:38px;padding:0 14px;font-size:13px;font-weight:800;color:#fff;background:linear-gradient(135deg,#6366f1,#06b6d4);cursor:pointer;white-space:nowrap}' +
+    '.nxi .nxi-no{' + R + 'flex:none;display:inline-flex;align-items:center;justify-content:center;width:30px;height:38px;color:rgba(255,255,255,.6);font-size:18px;cursor:pointer}';
+  var SHARE = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 15V4M8 8l4-4 4 4M5 12v7a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1v-7"/></svg>';
+  var el = null, dip = null;
+  function build() {
+    if (el) return el;
+    var s = document.createElement('style'); s.textContent = css; document.head.appendChild(s);
+    el = document.createElement('div'); el.className = 'nxi'; el.setAttribute('role', 'dialog');
+    el.innerHTML = '<div class="nxi-ic">' + (C.icon ? '<img alt="" src="' + C.icon + '">' : '') + '</div>' +
+      '<div class="nxi-tx"><div class="nxi-ti">' + (C.title || 'Instalá la app') + '</div><div class="nxi-su">' + (C.sub || 'Abrila como una app, sin descargar nada') + '</div></div>' +
+      '<button class="nxi-ok" type="button">Instalar</button><button class="nxi-no" type="button" aria-label="Cerrar">\u2715</button>';
+    document.body.appendChild(el);
+    el.querySelector('.nxi-no').onclick = function () { hide(); };
+    el.querySelector('.nxi-ok').onclick = function () {
+      if (dip) { dip.prompt(); try { dip.userChoice.then(function () { dip = null; hide(); }); } catch (e) { hide(); } return; }
+      hide();
+    };
+    return el;
+  }
+  function show() { if (standalone()) return; build(); el.classList.add('on'); }
+  function hide() { if (el) el.classList.remove('on'); mark(); }
+  window.nxInstalar = function () { if (dip) { dip.prompt(); return; } var ios = /iPhone|iPad|iPod/.test(navigator.userAgent); build(); if (ios) iosText(); show(); };
+  function iosText() { build(); el.querySelector('.nxi-su').innerHTML = 'Tocá ' + SHARE + ' <strong>Compartir</strong> y después <strong>"Agregar a inicio"</strong>'; el.querySelector('.nxi-ok').textContent = 'Entendido'; }
+
+  addEventListener('beforeinstallprompt', function (e) {
+    e.preventDefault(); dip = e;
+    setTimeout(function () { if (!(C.busy && C.busy())) show(); }, C.delay || 12000);
+  });
+  addEventListener('appinstalled', function () { hide(); });
+  var ios = /iPhone|iPad|iPod/.test(navigator.userAgent) && !window.MSStream;
+  if (ios) setTimeout(function () { if (C.busy && C.busy()) return; iosText(); show(); }, C.delayIos || 20000);
+})();
 </script>
 </body>
 </html>
