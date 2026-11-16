@@ -198,7 +198,7 @@ button{font:inherit;color:inherit;border:0;background:none;cursor:pointer}
 .cli:active{background:#f1f7fa}.cli .dot{width:28px;height:28px;font-size:12.5px;box-shadow:0 2px 6px rgba(0,0,0,.15)}
 .cli em{margin-left:auto;font-style:normal;font:700 12px Nunito;color:var(--mut);white-space:nowrap}
 .cli svg{width:16px;height:16px;color:#9fb3bf;flex:none}
-body.lst .av{display:none}
+body.lst .av,body.sh .av{display:none}
 .nxi .nxi-ok,.nxi .nxi-ic{background:linear-gradient(135deg,#21c3f0,#0b7fb5)!important}
 .nxi{background:#0e3247!important}
 </style>
@@ -276,7 +276,7 @@ function go(s,x,y,ms=420){cancelAnimationFrame(anim);const s0=sc,x0=tx,y0=ty,t0=
  (function f(t){const k=Math.min(1,(t-t0)/ms),e=1-Math.pow(1-k,3);sc=s0+(s-s0)*e;tx=x0+(x-x0)*e;ty=y0+(y-y0)*e;clamp();apply();if(k<1)anim=requestAnimationFrame(f)})(t0)}
 function zoomAt(f,cx,cy,ms=220){const s=Math.min(maxS,Math.max(minS,sc*f)),k=s/sc;go(s,cx-(cx-tx)*k,cy-(cy-ty)*k,ms)}
 function reset(ms){vw=innerWidth;vh=innerHeight;minS=Math.min(vw/W,(vh-200)/H)*0.6;maxS=Math.max(2.2,minS*7);const s=fitS();go(s,(vw-W*s)/2,190+((vh-190)-H*s)/2,ms??420)}
-function flyTo(x,y,s){s=s||Math.max(sc,Math.min(maxS,fitS()*2.2));const shh=document.body.classList.contains('sh')?$('sheet').offsetHeight:0;const top=250,hs=top+Math.max(60,(vh-shh-top))/2+20;go(s,vw/2-x*s,hs-y*s)}
+function flyTo(x,y,s){s=s||Math.max(sc,Math.min(maxS,fitS()*2.2));const shh=document.body.classList.contains('sh')?$('sheet').offsetHeight:0;const top=200,hs=top+Math.max(60,(vh-shh-top))/2+20;go(s,vw/2-x*s,hs-y*s)}
 const P=new Map();let moved=0,pinch=null,tapT=0;
 const loc=e=>({x:e.clientX,y:e.clientY});
 function sp(){const[a,b]=[...P.values()];pinch={d:Math.max(1,Math.hypot(a.x-b.x,a.y-b.y)),s:sc,wx:((a.x+b.x)/2-tx)/sc,wy:((a.y+b.y)/2-ty)/sc}}
